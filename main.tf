@@ -25,4 +25,11 @@ module "compute" {
   subnet_id = module.network.private_subnet_ids[0]
   alb_sg_id = module.alb.alb_sg_id
   tags      = local.tags
+
+  depends_on = [
+    module.network,
+    module.alb
+  ]
+
+
 }
