@@ -231,4 +231,4 @@ for VPC_ID in $(get_non_default_vpcs); do
   echo "Done with VPC ${VPC_ID}"
 done
 
-echo "All non-default VPCs and their resources have been processed."
+echo "  All non-default VPCs and their resources have been processed."
