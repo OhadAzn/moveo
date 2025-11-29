@@ -17,3 +17,9 @@ variable "alb_sg_id" {
 variable "tags" {
   type = map(string)
 }
+
+variable "alb_target_group_arn" {
+  type        = string
+  description = "ARN of the ALB target group to register this instance with"
+  default     = ""
+}

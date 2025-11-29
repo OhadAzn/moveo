@@ -20,13 +20,19 @@ module "alb" {
 module "compute" {
   source = "./modules/compute"
 
-  name      = local.name
-  vpc_id    = module.network.vpc_id
-  subnet_id = module.network.private_subnet_ids[0]
-  alb_sg_id = module.alb.alb_sg_id
-  depends_on = [module.network]
-  tags      = local.tags
+  name                 = local.name
+  vpc_id               = module.network.vpc_id
+  subnet_id            = module.network.private_subnet_ids[0]
+  alb_sg_id            = module.alb.alb_sg_id
+  depends_on           = [module.network]
+  tags                 = local.tags
 
 
 
+}
+
+resource "aws_lb_target_group_attachment" "web" {
+  target_group_arn = module.alb.target_group_arn
+  target_id        = module.compute.instance_id
+  port             = 80
 }
