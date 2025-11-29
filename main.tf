@@ -13,7 +13,7 @@ module "alb" {
   name           = local.name
   vpc_id         = module.network.vpc_id
   public_subnets = module.network.public_subnet_ids
-  instance_id    = module.compute.instance_id
+  instance_id    = ""
   tags           = local.tags
 }
 
@@ -24,12 +24,9 @@ module "compute" {
   vpc_id    = module.network.vpc_id
   subnet_id = module.network.private_subnet_ids[0]
   alb_sg_id = module.alb.alb_sg_id
+  depends_on = [module.network]
   tags      = local.tags
 
-  depends_on = [
-    module.network,
-    module.alb
-  ]
 
 
 }

@@ -58,6 +58,7 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_target_group_attachment" "main" {
+  count            = var.instance_id != "" ? 1 : 0
   target_group_arn = aws_lb_target_group.main.arn
   target_id        = var.instance_id
   port             = 80
