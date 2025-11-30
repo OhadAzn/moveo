@@ -9,7 +9,6 @@ module "network" {
 
 module "alb" {
   source = "./modules/alb"
-
   name           = local.name
   vpc_id         = module.network.vpc_id
   public_subnets = module.network.public_subnet_ids
@@ -26,7 +25,6 @@ module "compute" {
   alb_sg_id            = module.alb.alb_sg_id
   depends_on           = [module.network]
   tags                 = local.tags
-
 
 
 }

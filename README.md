@@ -1,71 +1,50 @@
-# AWS Infrastructure with Terraform
+# DevOps Home Assignment - Moveo
 
-Simple setup: VPC with public/private subnets, ALB, and EC2 running Nginx in Docker.
+This project deploys a secure, dockerized Nginx server on AWS using Terraform. The goal is to have a private server that is publicly accessible via a Load Balancer, displaying the message: **"yo this is nginx"**.
 
 ## Architecture
 
-```
-Internet → ALB (public subnets) → EC2 (private subnet) → Nginx
-                                          ↓
-                                     NAT Gateway
-                                          ↓
-                                      Internet
-```
+The setup is designed for security and high availability:
 
-## What's deployed
+*   **VPC:** A custom network with 2 Public Subnets and 1 Private Subnets.
+*   **Load Balancer (ALB):** Sits in the Public Subnets. It's the only entry point from the internet.
+*   **EC2 Instance:** Sits in a Private Subnet. It has no public IP address and cannot be reached directly.
+*   **NAT Gateway:** Allows the private EC2 instance to download Docker updates without exposing it to incoming traffic.
+*   **Security Groups:** Strict rules ensure the EC2 instance only accepts traffic from the Load Balancer.
 
-- VPC with 2 public and 2 private subnets
-- Internet Gateway for public subnets
-- NAT Gateway for EC2 outbound traffic (costs ~$32/month)
-- Application Load Balancer in public subnets
-- EC2 instance in private subnet (no public IP)
-- Nginx running in Docker container on EC2
+## Prerequisites
 
-## Security
+To run this project, you need:
 
-- ALB allows port 80 from anywhere
-- EC2 only accepts traffic from ALB security group
-- EC2 has no public IP
-- Private subnets route through NAT, not IGW
+*   An AWS Account
+*   AWS CLI configured locally
+*   Terraform installed
 
-## Usage
+## How to Run
 
-```bash
-terraform init
-terraform plan
-terraform apply
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/OhadAzn/moveo.git
+    cd moveo
+    ```
+    terraform init
+    ```
+    terraform apply
+    ```
+2.  **Access the App:**
+    After the deployment finishes, Terraform will output an `alb_url`.
+    Copy and paste that URL into your browser. You should see:
+    > **yo this is nginx**
 
-Wait 2-3 minutes for EC2 to install Docker and start Nginx.
+## Docker Setup
 
-Access the app:
-```bash
-terraform output alb_url
-```
+The Nginx container is configured automatically using the EC2 `user_data` script.
+It pulls the official `nginx:alpine` image and mounts a custom `index.html` file containing our message. The container is set to restart always, ensuring resilience.
 
-Clean up:
-```bash
-terraform destroy
-```
+## CI/CD (GitHub Actions)
 
-## Variables
-
-Edit these in `variables.tf` if needed:
-- aws_region (default: us-east-1)
-- vpc_cidr (default: 10.0.0.0/16)
-- project (default: moveo)
-- environment (default: dev)
-- owner (default: ohad)
-
-## Traffic flow
-
-1. Client hits ALB DNS name
-2. ALB forwards to target group
-3. Target group sends to EC2 on port 80
-4. EC2 security group checks source (must be ALB SG)
-5. Docker forwards to Nginx container
-6. Nginx returns custom HTML
-
-## Cost warning
-
-NAT Gateway is the most expensive part (~$32/month). Everything else is minimal on free tier.
+A GitHub Actions workflow is included in `.github/workflows/terraform.yml`.
+It automatically triggers on push to the `main` branch:
+*   Sets up AWS credentials.
+*   Installs Terraform.
+*   Runs `terraform init` and `terraform apply`.

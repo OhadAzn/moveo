@@ -1,4 +1,4 @@
-name: Terraform Deploy (basic)
+name: Terraform Deploy (
 
 on:
   push:

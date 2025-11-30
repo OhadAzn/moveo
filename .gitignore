@@ -1,9 +1,3 @@
-# ========================================================
-# Terraform .gitignore
-# ========================================================
-# Excludes Terraform state files, credentials, and 
-# sensitive data from version control
-# ========================================================
 
 # Local .terraform directories
 **/.terraform/*

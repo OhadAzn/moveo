@@ -44,7 +44,7 @@ resource "aws_instance" "web" {
               systemctl start docker
               systemctl enable docker
               
-              echo '<h1>Hello from Terraform!</h1><p>Traffic: Client → ALB → EC2 → Docker → Nginx</p>' > /tmp/index.html
+              echo '<h1>yo this is nginx</h1>' > /tmp/index.html
               
               docker run -d -p 80:80 --name nginx --restart always nginx:alpine
               sleep 5
